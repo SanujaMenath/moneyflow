@@ -1,7 +1,33 @@
-# Tauri + React + Typescript
+# MoneyFlow 💸
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+MoneyFlow is a desktop-first personal finance management application built using Tauri and React.
 
-## Recommended IDE Setup
+## 🚀 Features (Planned)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- Track income and expenses
+- Recurring transactions
+- Financial dashboard with insights
+- Loan and interest tracking
+- Offline-first architecture
+- Future mobile sync
+
+## 🛠 Tech Stack
+
+- Tauri (Rust backend)
+- React + TypeScript
+- Tailwind CSS v4
+- SQLite (planned)
+
+## 🎨 Theme
+
+Ocean Finance Theme:
+- Navy, Blue, Cyan accents
+- Clean financial dashboard UI
+
+## 📌 Status
+
+🚧 In development
+
+## 📷 Preview
+
+Coming soon...
