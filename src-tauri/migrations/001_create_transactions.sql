@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS transactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  amount INTEGER NOT NULL,
+  type TEXT NOT NULL,
+  category TEXT NOT NULL,
+  date TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
