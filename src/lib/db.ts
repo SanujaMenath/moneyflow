@@ -7,7 +7,6 @@ export const getDB = async () => {
 
   db = await Database.load("sqlite:moneyflow.db");
 
-
   await db.execute(`
     CREATE TABLE IF NOT EXISTS transactions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,7 +14,9 @@ export const getDB = async () => {
       type TEXT NOT NULL,
       category TEXT NOT NULL,
       date TEXT NOT NULL,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL,
+      recurring_frequency TEXT DEFAULT 'none',
+      recurring_end_date TEXT
     );
   `);
 
