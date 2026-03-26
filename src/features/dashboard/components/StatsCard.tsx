@@ -10,6 +10,7 @@ interface StatsCardProps {
 const StatsCard = ({ title, amount, type = "balance", icon: Icon }: StatsCardProps) => {
   const formattedAmount = (amount / 100).toLocaleString(undefined, {
     minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 
   const getTextColor = () => {
@@ -25,18 +26,22 @@ const StatsCard = ({ title, amount, type = "balance", icon: Icon }: StatsCardPro
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-text-secondary text-sm font-medium">{title}</p>
-          <h3 className={`text-3xl font-bold mt-3 Rs.{getTextColor()}`}>
+ 
+    <div className="bg-white p-4 sm:p-4 lg:p-5 rounded-2xl border border-border shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-text-secondary text-xs sm:text-sm font-medium truncate">
+            {title}
+          </p>
+          
+          <h3 className={`font-bold mt-1 lg:mt-3 truncate tracking-tight ${getTextColor()} text-base sm:text-sm lg:text-2xl`}>
             {getSign()}Rs.{formattedAmount}
           </h3>
         </div>
 
         {Icon && (
-          <div className="p-3 bg-gray-100 rounded-xl">
-            <Icon size={24} className="text-text-secondary" />
+          <div className="p-2 sm:p-3 bg-gray-50 rounded-xl shrink-0">
+            <Icon className="text-text-secondary w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
           </div>
         )}
       </div>

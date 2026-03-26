@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import type { Transaction } from "../types/transaction";
 
 interface TransactionsPageProps {
@@ -15,64 +15,70 @@ const TransactionsPage = ({
   loading,
 }: TransactionsPageProps) => {
   return (
-    <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-border flex justify-between items-center">
-        <h3 className="font-bold text-text-primary text-lg">
-          All Transactions
-        </h3>
+      <div className="p-4 sm:p-6 border-b border-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="min-w-0">
+          <h3 className="font-bold text-text-primary text-base lg:text-lg truncate">
+            All Transactions
+          </h3>
+          <p className="text-text-secondary text-xs mt-0.5">
+            Showing {transactions.length} records
+          </p>
+        </div>
 
         <button
           onClick={onAddClick}
-          className="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+          className="w-full sm:w-auto shrink-0 bg-primary hover:bg-blue-700 text-white px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 shadow-sm"
         >
-          + Add Transaction
+          <Plus size={18} />
+          <span>Add Transaction</span>
         </button>
       </div>
 
       {/* Table Area */}
       <div className="overflow-x-auto">
         {loading ? (
-          <div className="p-20 text-center text-gray-400">
+          <div className="p-12 sm:p-20 text-center text-text-secondary animate-pulse text-sm">
             Loading transactions...
           </div>
         ) : transactions.length === 0 ? (
-          <div className="p-20 text-center text-gray-400">
+          <div className="p-12 sm:p-20 text-center text-text-secondary text-sm">
             No transactions yet. Start tracking your cash flow!
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-160">
             <thead>
-              <tr className="text-text-secondary text-xs uppercase tracking-wider border-b border-border bg-gray-50">
-                <th className="p-4 font-semibold">Date</th>
-                <th className="p-4 font-semibold">Category</th>
-                <th className="p-4 font-semibold">Type</th>
-                <th className="p-4 font-semibold text-right">Amount</th>
-                <th className="p-4 font-semibold text-center">Recurring</th>
-                <th className="p-4 font-semibold text-center">Actions</th>
+              <tr className="text-text-secondary text-[10px] lg:text-xs uppercase tracking-wider border-b border-border bg-gray-50/50">
+                <th className="px-4 py-3 font-semibold">Date</th>
+                <th className="px-4 py-3 font-semibold">Category</th>
+                <th className="px-4 py-3 font-semibold">Type</th>
+                <th className="px-4 py-3 font-semibold text-right">Amount</th>
+                <th className="px-4 py-3 font-semibold text-center">Recurring</th>
+                <th className="px-4 py-3 font-semibold text-center">Actions</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-border">
               {transactions.map((t: Transaction) => (
                 <tr
                   key={t.id}
-                  className="border-b border-border hover:bg-bg/50 transition-colors"
+                  className="hover:bg-gray-50/40 transition-colors group"
                 >
-                  <td className="p-4 text-sm text-text-secondary">
+                  <td className="px-4 py-3.5 text-xs lg:text-sm text-text-secondary whitespace-nowrap">
                     {t.date}
                   </td>
 
-                  <td className="p-4 text-sm font-medium text-text-primary">
+                  <td className="px-4 py-3.5 text-xs lg:text-sm font-medium text-text-primary">
                     {t.category}
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3.5">
                     <span
-                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full Rs.{
+                      className={`inline-block px-2.5 py-0.5 text-[10px] lg:text-xs font-bold rounded-md border ${
                         t.type === "income"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-rose-100 text-rose-700"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                          : "bg-rose-50 text-rose-700 border-rose-100"
                       }`}
                     >
                       {t.type.toUpperCase()}
@@ -80,30 +86,31 @@ const TransactionsPage = ({
                   </td>
 
                   <td
-                    className={`p-4 text-sm font-bold text-right Rs.{
-                      t.type === "income"
-                        ? "text-text-income"
-                        : "text-text-expense"
+                    className={`px-4 py-3.5 text-xs lg:text-sm font-bold text-right whitespace-nowrap ${
+                      t.type === "income" ? "text-text-income" : "text-text-expense"
                     }`}
                   >
-                    {t.type === "income" ? "+" : "-"}Rs.
-                    {(t.amount / 100).toFixed(2)}
+                    {t.type === "income" ? "+" : "-"} Rs.
+                    {(t.amount / 100).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
                   </td>
 
-                  <td className="p-4 text-center text-sm text-text-secondary">
-                    {t.recurringFrequency &&
-                    t.recurringFrequency !== "none"
-                      ? t.recurringFrequency
-                      : "—"}
+                  <td className="px-4 py-3.5 text-center text-xs text-text-secondary">
+                    <span className="bg-gray-100 px-2 py-1 rounded text-[10px] whitespace-nowrap">
+                      {t.recurringFrequency && t.recurringFrequency !== "none"
+                        ? t.recurringFrequency
+                        : "—"}
+                    </span>
                   </td>
 
-                  <td className="p-4 text-center">
+                  <td className="px-4 py-3.5 text-center">
                     <button
                       onClick={() => remove(t.id!)}
-                      className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all"
+                      className="p-2 text-text-secondary hover:text-text-expense hover:bg-rose-50 rounded-lg transition-all"
                       title="Delete Transaction"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
