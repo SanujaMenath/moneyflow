@@ -1,5 +1,6 @@
 import { Trash2, Plus } from "lucide-react";
 import type { Transaction } from "../types/transaction";
+import { useCurrency } from "../../context/CurrencyContext";
 
 interface TransactionsPageProps {
   transactions: Transaction[];
@@ -14,6 +15,8 @@ const TransactionsPage = ({
   remove,
   loading,
 }: TransactionsPageProps) => {
+  const { format } = useCurrency();
+
   return (
     <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
       {/* Header */}
@@ -90,10 +93,7 @@ const TransactionsPage = ({
                       t.type === "income" ? "text-text-income" : "text-text-expense"
                     }`}
                   >
-                    {t.type === "income" ? "+" : "-"} Rs.
-                    {(t.amount / 100).toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    })}
+                    {t.type === "income" ? "+" : "-"} {format(t.amount)}                   
                   </td>
 
                   <td className="px-4 py-3.5 text-center text-xs text-text-secondary">

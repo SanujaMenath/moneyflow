@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { X } from "lucide-react";
 import { createTransaction } from "./services/transactionService";
 import { Transaction, RecurringFrequency } from "../types/transaction";
 
@@ -7,28 +8,14 @@ interface AddTransactionFormProps {
   onSave: (data: Transaction) => void;
 }
 
-// Define categories - easy to expand later
 const incomeCategories = [
-  "Salary",
-  "Freelance",
-  "Investment",
-  "Business",
-  "Gift",
-  "Other Income",
+  "Salary", "Freelance", "Investment", "Business", "Gift", "Other Income",
 ] as const;
 
 const expenseCategories = [
-  "Food & Dining",
-  "Transport",
-  "Housing & Rent",
-  "Bills & Utilities",
-  "Shopping",
-  "Healthcare",
-  "Entertainment",
-  "Education",
-  "Travel",
-  "Installments/Loans",
-  "Other Expense",
+  "Food & Dining", "Transport", "Housing & Rent", "Bills & Utilities",
+  "Shopping", "Healthcare", "Entertainment", "Education", "Travel",
+  "Installments/Loans", "Other Expense",
 ] as const;
 
 const frequencies: { value: RecurringFrequency; label: string }[] = [
@@ -48,7 +35,6 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
   const [recurringFrequency, setRecurringFrequency] = useState<RecurringFrequency>("none");
   const [recurringEndDate, setRecurringEndDate] = useState<string>("");
 
-  // Dynamically filtered categories based on type
   const availableCategories = useMemo(() => {
     return type === "income" ? incomeCategories : expenseCategories;
   }, [type]);
@@ -68,14 +54,13 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
       category: category.trim(),
       date,
       createdAt: new Date().toISOString(),
-      recurringFrequency,                    // new
-      recurringEndDate: recurringEndDate || null, // new
+      recurringFrequency,
+      recurringEndDate: recurringEndDate || null,
     };
 
     await createTransaction(transactionData);
     onSave(transactionData);
 
-    // Reset form
     setAmount("");
     setCategory("");
     setDate(today);
@@ -86,14 +71,26 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-xl max-w-md mx-auto">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        New Transaction
-      </h3>
+    <div className="p-5 sm:p-6 bg-white rounded-t-2xl sm:rounded-2xl">
+      <div className="flex items-center justify-between mb-5 sm:mb-6">
+        <h3 className="text-lg sm:text-xl font-bold text-text-primary">
+          New Transaction
+        </h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-gray-100 transition-colors"
+          aria-label="Close"
+        >
+          <X size={20} />
+        </button>
+      </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 sm:hidden" />
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
         {/* Amount */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-text-secondary">Amount</label>
           <input
             type="number"
@@ -101,21 +98,18 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
             placeholder="0.00"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none"
+            className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm sm:text-base"
             required
           />
         </div>
 
         {/* Type Toggle */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-text-secondary">Transaction Type</label>
           <div className="flex bg-bg p-1 rounded-xl border border-border">
             <button
               type="button"
-              onClick={() => {
-                setType("income");
-                setCategory(""); // reset category when type changes
-              }}
+              onClick={() => { setType("income"); setCategory(""); }}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
                 type === "income"
                   ? "bg-white text-text-income shadow-sm"
@@ -126,10 +120,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                setType("expense");
-                setCategory("");
-              }}
+              onClick={() => { setType("expense"); setCategory(""); }}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
                 type === "expense"
                   ? "bg-white text-text-expense shadow-sm"
@@ -141,63 +132,60 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
           </div>
         </div>
 
-        {/* Category - Dynamic */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text-secondary">Category</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="p-3 border border-border rounded-xl"
-            required
-          >
-            <option value="">Select category</option>
-            {availableCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Category */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-text-secondary">Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="p-3 border border-border rounded-xl text-sm sm:text-base bg-white"
+              required
+            >
+              <option value="">Select category</option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
 
-        {/* Date */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text-secondary">Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary"
-            required
-          />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-text-secondary">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              required
+            />
+          </div>
         </div>
 
         {/* Recurring */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-text-secondary">Recurring</label>
           <select
             value={recurringFrequency}
             onChange={(e) => setRecurringFrequency(e.target.value as RecurringFrequency)}
-            className="p-3 border border-border rounded-xl"
+            className="p-3 border border-border rounded-xl text-sm sm:text-base bg-white"
           >
             {frequencies.map((freq) => (
-              <option key={freq.value} value={freq.value}>
-                {freq.label}
-              </option>
+              <option key={freq.value} value={freq.value}>{freq.label}</option>
             ))}
           </select>
         </div>
 
-        {/* Recurring End Date (only show if recurring is not "none") */}
+        {/* Recurring End Date */}
         {recurringFrequency !== "none" && (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-text-secondary">
-              End Date (optional)
+              End Date <span className="text-text-secondary font-normal">(optional)</span>
             </label>
             <input
               type="date"
               value={recurringEndDate}
               onChange={(e) => setRecurringEndDate(e.target.value)}
-              className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary"
+              className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
             <p className="text-xs text-text-secondary">
               Leave empty for indefinite recurring
@@ -206,17 +194,17 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
         )}
 
         {/* Actions */}
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-3 mt-2 sm:mt-4 pb-1">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-3 border border-border text-text-secondary rounded-xl hover:bg-bg transition"
+            className="flex-1 px-4 py-3 border border-border text-text-secondary rounded-xl hover:bg-bg transition text-sm sm:text-base font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 bg-primary text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all"
+            className="flex-1 bg-primary text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all text-sm sm:text-base"
           >
             Save Transaction
           </button>

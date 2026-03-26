@@ -5,28 +5,24 @@ import DashboardView from "./features/dashboard/DashboardView";
 import TransactionsPage from "./features/transactions/TransactionsPage";
 import AddTransactionForm from "./features/transactions/AddTransactionForm";
 import { useTransactions } from "./features/transactions/hooks/useTransactions";
+import SettingsPage from "./features/settings/SettingsPage";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<
-    "Dashboard" | "Transactions" | "Analytics"
-  >("Dashboard");
+  const [activeTab, setActiveTab] = useState<"Dashboard" | "Transactions" | "Analytics" |  "Settings">("Dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
 
   const handleAddTransaction = () => setShowAddModal(true);
+  const handleCloseModal = () => setShowAddModal(false);
   const tx = useTransactions();
 
   const handleSaveComplete = () => {
-    tx.refresh(); 
+    tx.refresh();
     setShowAddModal(false);
   };
 
   return (
     <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
-      {/* WRAPPER: min-w-0 prevents flex items from breaking the layout 
-          when content (like a table) is wider than the screen.
-      */}
       <div className="min-w-0 w-full animate-in fade-in duration-500">
-        
         {activeTab === "Dashboard" && (
           <DashboardView transactions={tx.transactions} />
         )}
@@ -48,17 +44,26 @@ function App() {
             </p>
           </div>
         )}
+
+        {activeTab === "Settings" && <SettingsPage />}
       </div>
 
       {/* Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6">
-         
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-6"
+          onClick={handleCloseModal}
+        >
+        
+          <div
+            className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="overflow-y-auto flex-1 custom-scrollbar">
               <AddTransactionForm
                 onSave={handleSaveComplete}
-                onClose={() => setShowAddModal(false)}
+                onClose={handleCloseModal}
               />
             </div>
           </div>
