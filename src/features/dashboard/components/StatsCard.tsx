@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { useCurrency } from "../../../context/CurrencyContext";
 
 interface StatsCardProps {
   title: string;
@@ -8,10 +9,6 @@ interface StatsCardProps {
 }
 
 const StatsCard = ({ title, amount, type = "balance", icon: Icon }: StatsCardProps) => {
-  const formattedAmount = (amount / 100).toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 
   const getTextColor = () => {
     if (type === "income") return "text-text-income";
@@ -25,6 +22,8 @@ const StatsCard = ({ title, amount, type = "balance", icon: Icon }: StatsCardPro
     return "";
   };
 
+  const { format } = useCurrency();
+
   return (
  
     <div className="bg-white p-4 sm:p-4 lg:p-5 rounded-2xl border border-border shadow-sm hover:shadow-md transition-all duration-300">
@@ -35,7 +34,7 @@ const StatsCard = ({ title, amount, type = "balance", icon: Icon }: StatsCardPro
           </p>
           
           <h3 className={`font-bold mt-1 lg:mt-3 truncate tracking-tight ${getTextColor()} text-base sm:text-sm lg:text-2xl`}>
-            {getSign()}Rs.{formattedAmount}
+            {getSign()}{format(amount)}
           </h3>
         </div>
 
