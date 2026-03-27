@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { Transaction } from "../types/transaction";
 import StatsCard from "./components/StatsCard";
 import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import AnalyticsDonut from "./components/AnalyticsDonut";
 
 interface DashboardViewProps {
   transactions?: Transaction[];  
@@ -48,19 +49,18 @@ const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
         />
       </div>
 
-      {/* Analytics / Chart Area */}
-      <div className="bg-white p-8 rounded-2xl border border-border shadow-sm min-h-95 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">📊</div>
-          <h4 className="text-text-primary font-semibold text-xl mb-2">
-            Monthly Analytics
-          </h4>
-          <p className="text-text-secondary max-w-md">
-            Interactive chart showing income vs expenses over time will appear here.
-            <br />
-            <span className="text-xs">(Coming in next iteration)</span>
-          </p>
+     {/* Analytics Area */}
+      <div className="bg-white p-6 sm:p-10 rounded-3xl border border-border shadow-sm overflow-hidden">
+        <div className="mb-8">
+          <h4 className="text-text-primary font-bold text-xl">Monthly Overview</h4>
+          <p className="text-text-secondary text-sm">Visualizing your income vs expense ratio.</p>
         </div>
+
+        {/* Replace your old placeholder with this: */}
+        <AnalyticsDonut 
+          income={stats.income} 
+          expenses={stats.expenses} 
+        />
       </div>
 
       {/* Quick Summary / Recent Activity Placeholder */}
