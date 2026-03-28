@@ -6,6 +6,7 @@ import TransactionsPage from "./features/transactions/TransactionsPage";
 import AddTransactionForm from "./features/transactions/AddTransactionForm";
 import { useTransactions } from "./features/transactions/hooks/useTransactions";
 import SettingsPage from "./features/settings/SettingsPage";
+import AnalyticsPage from "./features/analytics/AnalyticsPage";
 
 function App() {
   const [activeTab, setActiveTab] = useState<"Dashboard" | "Transactions" | "Analytics" |  "Settings">("Dashboard");
@@ -37,12 +38,7 @@ function App() {
         )}
 
         {activeTab === "Analytics" && (
-          <div className="bg-white rounded-2xl border border-border p-6 md:p-12 text-center shadow-sm">
-            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-4">Analytics</h3>
-            <p className="text-text-secondary text-sm md:text-base">
-              Advanced charts and reports coming soon...
-            </p>
-          </div>
+          <AnalyticsPage transactions={tx.transactions} />
         )}
 
         {activeTab === "Settings" && <SettingsPage />}

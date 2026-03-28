@@ -1,5 +1,5 @@
 import { getDB } from "../../../lib/db";
-import type { Transaction, RecurringFrequency } from "../../types/transaction";
+import type { Transaction, RecurringFrequency } from "../../../types/transaction";
 
 export const createTransaction = async (data: Transaction) => {
   const db = await getDB();

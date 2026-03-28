@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Trash2, Plus, Calendar, FilterX, Clock } from "lucide-react";
-import type { Transaction } from "../types/transaction";
+import type { Transaction } from "../../types/transaction";
 import { useCurrency } from "../../context/CurrencyContext";
 import { getDatePresets } from "../../utils/date";
 

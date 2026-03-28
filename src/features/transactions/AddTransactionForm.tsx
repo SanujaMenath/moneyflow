@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { X } from "lucide-react";
 import { createTransaction } from "./services/transactionService";
-import { Transaction, RecurringFrequency } from "../types/transaction";
+import { Transaction, RecurringFrequency } from "../../types/transaction";
 
 interface AddTransactionFormProps {
   onClose: () => void;
