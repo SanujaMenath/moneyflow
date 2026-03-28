@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Transaction } from "../../types/transaction";
+import type { Transaction } from "../../../types/transaction";
 import {
   getTransactions,
   deleteTransaction,

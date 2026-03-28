@@ -1,10 +1,12 @@
 import { useMemo } from "react";
-import type { Transaction } from "../types/transaction";
+import type { Transaction } from "../../types/transaction";
 import StatsCard from "./components/StatsCard";
-import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, Lightbulb } from "lucide-react";
+import AnalyticsDonut from "./components/AnalyticsDonut";
+import SeasonalTrendChart from "./components/SeasonalTrendChart"; // New Import
 
 interface DashboardViewProps {
-  transactions?: Transaction[];  
+  transactions?: Transaction[];
 }
 
 const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
@@ -25,9 +27,9 @@ const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
   }, [transactions]);
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="space-y-6 pb-10">
+      {/* 1. Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard
           title="Total Balance"
           amount={stats.balance}
@@ -48,30 +50,42 @@ const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
         />
       </div>
 
-      {/* Analytics / Chart Area */}
-      <div className="bg-white p-8 rounded-2xl border border-border shadow-sm min-h-95 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">📊</div>
-          <h4 className="text-text-primary font-semibold text-xl mb-2">
-            Monthly Analytics
-          </h4>
-          <p className="text-text-secondary max-w-md">
-            Interactive chart showing income vs expenses over time will appear here.
-            <br />
-            <span className="text-xs">(Coming in next iteration)</span>
-          </p>
+      {/* 2. Ratio & Insights Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+        {/* Donut Chart (Takes up 3/5 of space on large screens) */}
+        <div className="xl:col-span-3 bg-white p-6 sm:p-10 rounded-3xl border border-border shadow-sm">
+          <div className="mb-8">
+            <h4 className="text-text-primary font-bold text-xl">Monthly Ratio</h4>
+            <p className="text-text-secondary text-sm">Income vs Expense balance</p>
+          </div>
+          <AnalyticsDonut income={stats.income} expenses={stats.expenses} />
+        </div>
+
+        {/* Dynamic Insight Card (Takes up 2/5 of space) */}
+        <div className="xl:col-span-2 bg-primary text-white p-8 rounded-3xl shadow-lg shadow-blue-900/10 flex flex-col justify-between">
+          <div>
+            <div className="bg-white/20 w-12 h-12 rounded-2xl flex items-center justify-center mb-6">
+              <Lightbulb className="text-white" size={24} />
+            </div>
+            <h4 className="text-xl font-bold mb-3">AI Insight</h4>
+            <p className="text-blue-50 text-sm leading-relaxed">
+              {stats.expenses > stats.income 
+                ? "Your spending this period has exceeded your income. Try identifying non-essential recurring expenses to balance your flow." 
+                : "Great job! You are living below your means. This is a perfect time to set aside your surplus for long-term investments."}
+            </p>
+          </div>
+          <div className="mt-6 pt-6 border-t border-white/10">
+             <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200">Financial Health Score</span>
+             <div className="text-2xl font-black mt-1">
+               {stats.income > 0 ? Math.round(((stats.income - stats.expenses) / stats.income) * 100) : 0}%
+             </div>
+          </div>
         </div>
       </div>
 
-      {/* Quick Summary / Recent Activity Placeholder */}
-      <div className="bg-white rounded-2xl border border-border shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="font-semibold text-text-primary">Quick Overview</h4>
-          <span className="text-xs text-text-secondary">Last 30 days</span>
-        </div>
-        <p className="text-text-secondary text-sm">
-          More insights and recent transactions will be shown here in future updates.
-        </p>
+      {/* 3. Seasonal Trends (Full Width) */}
+      <div className="bg-white p-1 rounded-3xl border border-border shadow-sm">
+        <SeasonalTrendChart transactions={transactions} />
       </div>
     </div>
   );
