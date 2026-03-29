@@ -1,11 +1,52 @@
-import { Check, Coins, User, Palette, Calendar } from "lucide-react";
+import { Check, Coins, User, Palette, Calendar, Target } from "lucide-react";
 import { CURRENCIES, useCurrency } from "../../context/CurrencyContext";
+import { useSavingsGoal } from "../../context/SavingsGoalContext";
 
 const SettingsPage = () => {
   const { currency, setCurrency } = useCurrency();
+  const { savingsGoalPercent, setSavingsGoalPercent } = useSavingsGoal();
 
   return (
     <div className="flex flex-col gap-6">
+
+      {/* Savings Goal Section */}
+      <section className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center gap-3">
+          <div className="p-2 bg-emerald-50 rounded-lg">
+            <Target size={18} className="text-text-income" />
+          </div>
+          <div>
+            <h3 className="font-bold text-text-primary text-sm sm:text-base">Savings Goal</h3>
+            <p className="text-xs text-text-secondary mt-0.5">
+              Percentage of income to save each period
+            </p>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold text-text-primary">Target Percentage</span>
+            <span className="px-3 py-1 bg-primary text-white rounded-lg font-black text-lg">
+              {savingsGoalPercent}%
+            </span>
+          </div>
+          
+          <input
+            type="range"
+            min="0"
+            max="50"
+            step="1"
+            value={savingsGoalPercent}
+            onChange={(e) => setSavingsGoalPercent(parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary mb-4"
+          />
+          
+          <p className="text-xs text-text-secondary leading-relaxed">
+            Saving <span className="font-bold text-text-primary">{savingsGoalPercent}%</span> of your income builds long-term financial security. Expert advice usually recommends at least 20%.
+          </p>
+        </div>
+      </section>
+
       {/* Currency */}
       <section className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-3">
@@ -58,7 +99,7 @@ const SettingsPage = () => {
         </div>
       </section>
 
-      {/* Placeholder — Display Name */}
+      {/* Display Name */}
       <section className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden opacity-60">
         <div className="px-5 py-4 flex items-center gap-3">
           <div className="p-2 bg-gray-100 rounded-lg">
@@ -74,7 +115,7 @@ const SettingsPage = () => {
         </div>
       </section>
 
-      {/* Placeholder — Theme */}
+      {/* Theme */}
       <section className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden opacity-60">
         <div className="px-5 py-4 flex items-center gap-3">
           <div className="p-2 bg-gray-100 rounded-lg">
@@ -90,7 +131,7 @@ const SettingsPage = () => {
         </div>
       </section>
 
-      {/* Placeholder — Date Format */}
+      {/*  Date Format */}
       <section className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden opacity-60">
         <div className="px-5 py-4 flex items-center gap-3">
           <div className="p-2 bg-gray-100 rounded-lg">
