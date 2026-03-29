@@ -1,9 +1,9 @@
 [package]
 name = "moneyflow"
-version = "0.1.0"
-description = "A Tauri App"
+version = "1.0.0"
+description = "A desktop-first personal finance manager"
 build = "build.rs"
-authors = ["you"]
+authors = ["Sanuja Menath"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

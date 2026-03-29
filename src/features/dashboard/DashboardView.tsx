@@ -4,6 +4,7 @@ import StatsCard from "./components/StatsCard";
 import { TrendingUp, TrendingDown, Wallet, Lightbulb } from "lucide-react";
 import AnalyticsDonut from "./components/AnalyticsDonut";
 import SeasonalTrendChart from "./components/SeasonalTrendChart";
+import SavingsGoalCard from "./components/SavingsGoalCard";
 
 interface DashboardViewProps {
   transactions?: Transaction[];
@@ -39,6 +40,9 @@ const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
         <StatsCard title="Total Income"   amount={stats.income}   type="income"  icon={TrendingUp}  />
         <StatsCard title="Total Expenses" amount={stats.expenses} type="expense" icon={TrendingDown} />
       </div>
+      {stats.income > 0 && (
+        <SavingsGoalCard income={stats.income} expenses={stats.expenses} />
+      )}
 
       {/* Donut + Insight */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
