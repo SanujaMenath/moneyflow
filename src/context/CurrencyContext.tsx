@@ -36,7 +36,6 @@ export const CurrencyProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem("mf_currency", JSON.stringify(c));
   };
 
-  // Centralised formatter — divide cents, format with locale
   const format = (cents: number) => {
     const value = cents / 100;
     return `${currency.symbol}${value.toLocaleString(currency.locale, {

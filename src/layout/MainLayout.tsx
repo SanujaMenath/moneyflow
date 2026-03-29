@@ -56,7 +56,7 @@ const MainLayout = ({ children, activeTab, setActiveTab }: MainLayoutProps) => {
           ))}
         </nav>
 
-        {/* Settings pinned to bottom */}
+        {/* Settings tab */}
         <div className="mt-auto flex flex-col gap-1.5 px-2 pb-3">
           <NavBtn name="Settings" icon={Settings} />
           <div className="border-t border-white/10 pt-3 text-[10px] lg:text-xs text-center text-gray-500 font-semibold">
