@@ -1,16 +1,21 @@
 import { useMemo } from "react";
 import type { Transaction } from "../../types/transaction";
 import CategoryBarChart from "./components/CategoryBarChart";
-import SeasonalTrendChart from "../dashboard/components/SeasonalTrendChart"; // Reusing the trend chart
-import { PieChart, ListFilter, TrendingUp } from "lucide-react";
+import SeasonalTrendChart from "../dashboard/components/SeasonalTrendChart";
+import { ListFilter, TrendingUp, TrendingDown } from "lucide-react";
+import { useCurrency } from "../../context/CurrencyContext";
 
 const AnalyticsPage = ({ transactions }: { transactions: Transaction[] }) => {
-  const expensesOnly = useMemo(() => transactions.filter(t => t.type === "expense"), [transactions]);
+  const { format } = useCurrency();
 
-  // Transform Data for Bar Chart (Category Totals)
+  const expensesOnly = useMemo(
+    () => transactions.filter((t) => t.type === "expense"),
+    [transactions]
+  );
+
   const categoryData = useMemo(() => {
     const totals: Record<string, number> = {};
-    expensesOnly.forEach(t => {
+    expensesOnly.forEach((t) => {
       totals[t.category] = (totals[t.category] || 0) + t.amount;
     });
     return Object.entries(totals)
@@ -18,59 +23,112 @@ const AnalyticsPage = ({ transactions }: { transactions: Transaction[] }) => {
       .sort((a, b) => b.amount - a.amount);
   }, [expensesOnly]);
 
+  const totalSpend = categoryData.reduce((s, c) => s + c.amount, 0);
+  const topTwo = categoryData.slice(0, 2);
+
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-6 pb-10">
+      {/* Bar chart + Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Category Comparison Card */}
-        <div className="bg-white p-6 rounded-3xl border border-border shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
+        {/* Category Bar Chart */}
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-border shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
             <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-              <ListFilter size={20} />
+              <ListFilter size={18} />
             </div>
             <div>
-              <h3 className="font-bold text-text-primary">Expenses by Category</h3>
-              <p className="text-xs text-text-secondary">Where is your money going?</p>
+              <h3 className="font-bold text-text-primary text-sm sm:text-base">
+                Expenses by Category
+              </h3>
+              <p className="text-xs text-text-secondary mt-0.5">
+                Where is your money going?
+              </p>
             </div>
           </div>
           <CategoryBarChart data={categoryData} />
         </div>
 
-        {/* Top Insights Card */}
-        <div className="bg-white p-6 rounded-3xl border border-border shadow-sm flex flex-col">
-          <div className="flex items-center gap-3 mb-6">
+        {/* Insights Panel */}
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-border shadow-sm flex flex-col gap-4">
+          <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-              <TrendingUp size={20} />
+              <TrendingUp size={18} />
             </div>
-            <h3 className="font-bold text-text-primary">Key Spending Insights</h3>
+            <h3 className="font-bold text-text-primary text-sm sm:text-base">
+              Key Spending Insights
+            </h3>
           </div>
-          
-          <div className="flex-1 flex flex-col justify-center space-y-4">
-            {categoryData.length > 0 ? (
-              <>
-                <div className="p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                  <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">Biggest Expense</p>
-                  <p className="text-2xl font-black text-text-primary mt-1">{categoryData[0].category}</p>
-                </div>
-                <p className="text-sm text-text-secondary leading-relaxed">
-                  Your spending in <span className="font-bold text-text-primary">{categoryData[0].category}</span> represents the largest portion of your monthly outgoings. 
-                  Try to set a budget limit for this category in the next period.
+
+          {categoryData.length > 0 ? (
+            <>
+              {/* Biggest expense */}
+              <div className="p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-[10px] text-text-secondary uppercase font-bold tracking-wider mb-1">
+                  Biggest Expense
                 </p>
-              </>
-            ) : (
-              <p className="text-center text-text-secondary italic">Add some expenses to see insights!</p>
-            )}
-          </div>
+                <p className="text-xl font-black text-text-primary">
+                  {topTwo[0].category}
+                </p>
+                <p className="text-sm text-text-secondary mt-0.5">
+                  {format(topTwo[0].amount)} spent
+                  {totalSpend > 0 && (
+                    <span className="ml-1 font-semibold text-text-primary">
+                      ({Math.round((topTwo[0].amount / totalSpend) * 100)}% of total)
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              {/* Top 2 categories breakdown */}
+              <div className="flex flex-col gap-2">
+                {topTwo.map((item, i) => (
+                  <div key={item.category} className="flex items-center gap-3">
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ background: i === 0 ? "#3b82f6" : "#8b5cf6" }}
+                    />
+                    <span className="text-sm text-text-primary font-medium flex-1 truncate">
+                      {item.category}
+                    </span>
+                    <span className="text-sm text-text-secondary font-semibold">
+                      {format(item.amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-text-secondary">
+                  <TrendingDown size={14} />
+                  <span>Total tracked spend</span>
+                </div>
+                <span className="text-sm font-bold text-text-expense">
+                  {format(totalSpend)}
+                </span>
+              </div>
+            </>
+          ) : (
+            <p className="flex-1 flex items-center justify-center text-text-secondary italic text-sm">
+              Add some expenses to see insights!
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Seasonal Trends (Full Width) */}
-      <div className="bg-white p-6 rounded-3xl border border-border shadow-sm">
-        <div className="flex items-center gap-3 mb-2">
-           <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-              <PieChart size={20} />
-            </div>
-            <h3 className="font-bold text-text-primary text-lg">Seasonal Spending Trends</h3>
+      {/* Trend Chart */}
+      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-border shadow-sm">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+            <TrendingUp size={18} />
+          </div>
+          <div>
+            <h3 className="font-bold text-text-primary text-sm sm:text-base">
+              Seasonal Spending Trends
+            </h3>
+            <p className="text-xs text-text-secondary mt-0.5">
+              Category spending month by month
+            </p>
+          </div>
         </div>
         <SeasonalTrendChart transactions={transactions} />
       </div>
