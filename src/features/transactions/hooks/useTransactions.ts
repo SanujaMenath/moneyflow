@@ -3,6 +3,7 @@ import type { Transaction } from "../../../types/transaction";
 import {
   getTransactions,
   deleteTransaction,
+  updateTransaction, // Ensure this is exported from your service
 } from "../services/transactionService";
 
 export const useTransactions = () => {
@@ -34,6 +35,23 @@ export const useTransactions = () => {
     }
   }, [refresh]);
 
+
+  const stopRecurring = useCallback(async (id: number) => {
+    const confirmed = window.confirm(
+      "This will stop future occurrences of this transaction. Past records will remain. Continue?"
+    );
+    if (!confirmed) return;
+
+    try {
+  
+      await updateTransaction(id, { recurringFrequency: "none" });
+      await refresh();
+    } catch (error) {
+      console.error("Failed to stop recurrence:", error);
+      alert("Failed to stop recurrence. Please try again.");
+    }
+  }, [refresh]);
+
   useEffect(() => {
     refresh();
   }, [refresh]);
@@ -43,5 +61,6 @@ export const useTransactions = () => {
     loading,
     refresh,
     remove,
+    stopRecurring, 
   };
 };

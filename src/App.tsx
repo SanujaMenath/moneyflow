@@ -9,7 +9,9 @@ import SettingsPage from "./features/settings/SettingsPage";
 import AnalyticsPage from "./features/analytics/AnalyticsPage";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<"Dashboard" | "Transactions" | "Analytics" |  "Settings">("Dashboard");
+  const [activeTab, setActiveTab] = useState<
+    "Dashboard" | "Transactions" | "Analytics" | "Settings"
+  >("Dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
 
   const handleAddTransaction = () => setShowAddModal(true);
@@ -32,6 +34,7 @@ function App() {
           <TransactionsPage
             transactions={tx.transactions}
             remove={tx.remove}
+            stopRecurring={tx.stopRecurring} 
             loading={tx.loading}
             onAddClick={handleAddTransaction}
           />
@@ -46,12 +49,10 @@ function App() {
 
       {/* Modal */}
       {showAddModal && (
-        
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-6"
           onClick={handleCloseModal}
         >
-        
           <div
             className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}

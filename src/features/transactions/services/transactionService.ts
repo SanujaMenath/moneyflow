@@ -44,3 +44,26 @@ export const deleteTransaction = async (id: number) => {
   const db = await getDB();
   await db.execute("DELETE FROM transactions WHERE id = ?", [id]);
 };
+
+export const updateTransaction = async (id: number, updates: Partial<Transaction>) => {
+  const db = await getDB();
+  
+  const sets: string[] = [];
+  const params: any[] = [];
+
+  if (updates.amount !== undefined) { sets.push("amount = ?"); params.push(updates.amount); }
+  if (updates.type !== undefined) { sets.push("type = ?"); params.push(updates.type); }
+  if (updates.category !== undefined) { sets.push("category = ?"); params.push(updates.category); }
+  if (updates.date !== undefined) { sets.push("date = ?"); params.push(updates.date); }
+  if (updates.recurringFrequency !== undefined) { sets.push("recurring_frequency = ?"); params.push(updates.recurringFrequency); }
+  if (updates.recurringEndDate !== undefined) { sets.push("recurring_end_date = ?"); params.push(updates.recurringEndDate); }
+
+  if (sets.length === 0) return;
+
+  params.push(id);
+  
+  await db.execute(
+    `UPDATE transactions SET ${sets.join(", ")} WHERE id = ?`,
+    params
+  );
+};
