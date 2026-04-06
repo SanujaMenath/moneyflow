@@ -204,7 +204,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
           </button>
           <button
             type="submit"
-            className="flex-1 bg-primary text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all text-sm sm:text-base"
+            className="flex-1 bg-navy text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all text-sm sm:text-base"
           >
             Save Transaction
           </button>

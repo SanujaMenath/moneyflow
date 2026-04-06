@@ -178,7 +178,7 @@ const TransactionsPage = ({
             </p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse min-w-[640px]">
+          <table className="w-full text-left border-collapse min-w-160">
             <thead>
               <tr className="border-b border-slate-100">
                 {["Date", "Category", "Type", "Amount", "Recurring", "Actions"].map((h, i) => (

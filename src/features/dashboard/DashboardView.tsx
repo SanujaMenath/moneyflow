@@ -54,7 +54,7 @@ const DashboardView = ({ transactions = [] }: DashboardViewProps) => {
           <AnalyticsDonut income={stats.income} expenses={stats.expenses} />
         </div>
 
-        <div className="xl:col-span-2 bg-primary text-white p-6 sm:p-8 rounded-3xl shadow-lg shadow-blue-900/10 flex flex-col justify-between">
+        <div className="xl:col-span-2 bg-navy text-white p-6 sm:p-8 rounded-3xl shadow-lg shadow-blue-900/10 flex flex-col justify-between">
           <div>
             <div className="bg-white/20 w-10 h-10 rounded-2xl flex items-center justify-center mb-5">
               <Lightbulb className="text-white" size={20} />
