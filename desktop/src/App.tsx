@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MainLayout from "./layout/MainLayout";
+import { supabase } from "../../shared/supabase"; 
+import { Auth } from "./features/auth/components/Auth";
 
 import DashboardView from "./features/dashboard/DashboardView";
 import TransactionsPage from "./features/transactions/TransactionsPage";
@@ -9,10 +11,25 @@ import SettingsPage from "./features/settings/SettingsPage";
 import AnalyticsPage from "./features/analytics/AnalyticsPage";
 
 function App() {
+  const [session, setSession] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<
     "Dashboard" | "Transactions" | "Analytics" | "Settings"
   >("Dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleAddTransaction = () => setShowAddModal(true);
   const handleCloseModal = () => setShowAddModal(false);
@@ -22,6 +39,10 @@ function App() {
     tx.refresh();
     setShowAddModal(false);
   };
+
+  if (!session) {
+    return <Auth />;
+  }
 
   return (
     <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
