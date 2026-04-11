@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Transaction } from "../../../types/transaction";
-import { supabase } from "../../../../../shared/supabase"; 
+import { supabase } from "../../../lib/supabase"; 
 import {
   getTransactions,
   deleteTransaction,

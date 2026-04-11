@@ -1,10 +1,6 @@
-import { supabase } from "../../../../../shared/supabase";
+import { supabase } from "../../../lib/supabase";
 import type { Transaction, RecurringFrequency } from "../../../types/transaction";
 
-/**
- * Fetches all transactions for the currently logged-in user.
- * Supabase automatically filters by user_id because of the RLS policy you set!
- */
 export const getTransactions = async (): Promise<Transaction[]> => {
   const { data, error } = await supabase
     .from("transactions")

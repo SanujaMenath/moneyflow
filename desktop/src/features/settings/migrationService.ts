@@ -1,5 +1,5 @@
 import { getDB } from "../../lib/db";
-import { supabase } from "../../../../shared/supabase";
+import { supabase } from "../../lib/supabase";
 import { createTransaction } from "../transactions/services/transactionService";
 
 export const migrateLocalToCloud = async () => {

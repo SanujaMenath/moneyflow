@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import MainLayout from "./layout/MainLayout";
-import { supabase } from "../../shared/supabase"; 
+import { supabase } from "./lib/supabase"; 
 import { Auth } from "./features/auth/components/Auth";
 
 import DashboardView from "./features/dashboard/DashboardView";
