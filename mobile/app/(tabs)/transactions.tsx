@@ -135,15 +135,15 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onLongPress={() => showActionMenu(item)} // Touch and Hold trigger
-            delayLongPress={500} // Standard Android long-press delay
+            onLongPress={() => showActionMenu(item)} 
+            delayLongPress={500} 
             activeOpacity={0.7}
           >
             <View>
               <Text style={styles.category}>{item.category}</Text>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text style={styles.date}>{item.date}</Text>
-                {item.recurring_frequency !== "none" && (
+                {item.recurring_frequency && item.recurring_frequency !== "none" && (
                   <View style={styles.recurringBadge}>
                     <Ionicons name="repeat" size={10} color="#2563eb" />
                     <Text style={styles.recurringText}>
