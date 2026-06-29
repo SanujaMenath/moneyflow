@@ -56,11 +56,12 @@ export const useTransactions = () => {
 
     try {
       await deleteTransaction(id);
+      refresh();
     } catch (error) {
       console.error("Failed to delete transaction:", error);
       alert("Failed to delete transaction. Please try again.");
     }
-  }, []);
+  }, [refresh]);
 
   const stopRecurring = useCallback(async (id: number) => {
     const confirmed = window.confirm(
@@ -69,13 +70,13 @@ export const useTransactions = () => {
     if (!confirmed) return;
 
     try {
-      await updateTransaction(id, { recurringFrequency: "none" });
-   
+      await updateTransaction(id, { recurringFrequency: "none"});
+      refresh();
     } catch (error) {
       console.error("Failed to stop recurrence:", error);
       alert("Failed to stop recurrence. Please try again.");
     }
-  }, []);
+  }, [refresh]);
 
   return {
     transactions,
