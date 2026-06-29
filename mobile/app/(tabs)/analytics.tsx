@@ -21,8 +21,7 @@ export default function AnalyticsScreen() {
         .order("date", { ascending: false });
       if (error) throw error;
       setTransactions((data || []).map(fromDB));
-    } catch (e) {
-      console.error(e);
+    } catch {
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -8,6 +8,7 @@ import type { RecurringFrequency } from "../types/transaction";
 import { incomeCategories, expenseCategories, frequencies } from "../types/transaction";
 import { useRouter } from "expo-router";
 import DatePicker from "../components/DatePicker";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const saveBtnShadow = Platform.select({
   web: { boxShadow: "0 5px 10px rgba(37,99,235,0.3)" },
@@ -36,7 +37,6 @@ export default function AddTransactionScreen() {
   }, [type]);
 
   const showAndroidPicker = (isEndDate: boolean) => {
-    const { DateTimePickerAndroid } = require("@react-native-community/datetimepicker");
     DateTimePickerAndroid.open({
       value: isEndDate ? (endDate || new Date()) : date,
       onChange: (_event: any, selectedDate?: Date) => {

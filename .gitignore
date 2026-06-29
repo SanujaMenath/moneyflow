@@ -1,4 +1,4 @@
-# Logs
+# ─── Logs ───
 logs
 *.log
 npm-debug.log*
@@ -7,21 +7,66 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# ─── Dependencies ───
+node_modules/
+
+# ─── Build output ───
+dist/
+dist-ssr/
+web-build/
 *.local
 
-# Editor directories and files
+# ─── Desktop (Tauri) ───
+desktop/src-tauri/target/
+desktop/src-tauri/gen/
+
+# ─── Mobile (Expo) ───
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+mobile/ios/
+mobile/android/
+mobile/.kotlin/
+mobile/*.jks
+mobile/*.p8
+mobile/*.p12
+mobile/*.key
+mobile/*.mobileprovision
+mobile/*.pem
+mobile/expo-env.d.ts
+mobile/.metro-health-check*
+
+# ─── Environment files ───
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# ─── Editor directories and files ───
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+Thumbs.db
+ehthumbs.db
 
+# ─── TypeScript ───
+*.tsbuildinfo
+
+# ─── Rust ───
+desktop/src-tauri/target/
+
+# ─── Executables ───
 moneyflow.exe
 uninstall.exe
+
+# ─── OS files ───
+*.orig.*
+
+.github/workflows/ci.yml

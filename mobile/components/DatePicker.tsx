@@ -19,6 +19,7 @@ export default function DatePicker({ value, onChange, show, onClose }: Props) {
         <input
           type="date"
           value={dateStr}
+          placeholder="Select date"
           onChange={(e) => {
             const d = new Date(e.target.value + "T12:00:00");
             if (!isNaN(d.getTime())) onChange(d);

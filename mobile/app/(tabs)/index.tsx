@@ -30,8 +30,7 @@ export default function DashboardScreen() {
         .order('created_at', { ascending: false });
       if (error) throw error;
       setTransactions((data || []).map(fromDB));
-    } catch (e) {
-      console.error(e);
+    } catch {
     } finally {
       setLoading(false);
       setRefreshing(false);

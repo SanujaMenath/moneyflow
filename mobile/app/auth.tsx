@@ -37,7 +37,10 @@ export default function AuthScreen() {
         email, 
         password,
         options: {
-          emailRedirectTo: 'https://moneyflow.example.com',
+          emailRedirectTo: Platform.select({
+            web: window.location.origin,
+            default: 'moneyflowmobile://',
+          }),
         }
       });
       if (error) Alert.alert("Sign Up Error", error.message);

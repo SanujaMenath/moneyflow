@@ -2,7 +2,7 @@
   "expo": {
     "name": "MoneyFlowMobile",
     "slug": "MoneyFlowMobile",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "moneyflowmobile",
@@ -22,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.MoneyFlowMobile"
     },
     "web": {
       "bundler": "metro",

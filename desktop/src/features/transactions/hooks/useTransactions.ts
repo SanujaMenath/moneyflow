@@ -19,7 +19,6 @@ export const useTransactions = () => {
       const data = await getTransactions();
       setTransactions(data);
     } catch (error) {
-      console.error("Failed to fetch transactions:", error);
     } finally {
       setLoading(false);
     }
@@ -37,8 +36,7 @@ export const useTransactions = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'transactions' },
-        (payload) => {
-          console.log("Change detected in Supabase:", payload);
+        () => {
           refresh();
         }
       )
@@ -58,7 +56,6 @@ export const useTransactions = () => {
       await deleteTransaction(id);
       refresh();
     } catch (error) {
-      console.error("Failed to delete transaction:", error);
       alert("Failed to delete transaction. Please try again.");
     }
   }, [refresh]);
@@ -73,7 +70,6 @@ export const useTransactions = () => {
       await updateTransaction(id, { recurringFrequency: "none"});
       refresh();
     } catch (error) {
-      console.error("Failed to stop recurrence:", error);
       alert("Failed to stop recurrence. Please try again.");
     }
   }, [refresh]);

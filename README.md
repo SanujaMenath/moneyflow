@@ -6,13 +6,15 @@
 
 **A cross-platform financial ecosystem with seamless cloud synchronization.**
 
-Manage your finances on Windows, macOS, and Android perfectly synced, totally secure.
+Manage your finances on Windows, macOS, Linux, Android, and iOS — perfectly synced, totally secure.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/SanujaMenath/moneyflow/releases)
-[![Status](https://img.shields.io/badge/status-in%20development-orange?style=flat-square)]()
+[![Version](https://img.shields.io/badge/version-1.2.0-blue?style=flat-square)](https://github.com/SanujaMenath/moneyflow/releases)
+[![Status](https://img.shields.io/badge/status-release-green?style=flat-square)]()
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![CI](https://github.com/SanujaMenath/moneyflow/actions/workflows/ci.yml/badge.svg)](https://github.com/SanujaMenath/moneyflow/actions/workflows/ci.yml)
 [![Built with Tauri](https://img.shields.io/badge/built%20with-Tauri-24C8D8?style=flat-square&logo=tauri&logoColor=white)](https://tauri.app)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
+[![Expo](https://img.shields.io/badge/Expo-54-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev)
 
 </div>
 
@@ -20,24 +22,22 @@ Manage your finances on Windows, macOS, and Android perfectly synced, totally se
 
 ## Overview
 
-MoneyFlow has evolved from a simple desktop tool into a **full-stack financial ecosystem**. By leveraging a **Monorepo architecture**, MoneyFlow provides a unified experience across desktop and mobile devices. 
+MoneyFlow is a full-stack financial ecosystem built on a monorepo architecture. It provides a unified experience across desktop and mobile devices with real-time synchronization powered by Supabase.
 
-All data is secured via **Supabase Auth** and synchronized in real-time across platforms using a centralized PostgreSQL database. Whether you're at your desk or on the move, your financial "Single Source of Truth" is always with you.
-
----
-> **v1.0.0** — Initial release. Core tracking, dashboard analytics, and recurring transactions are live.
+All data is secured via **Supabase Auth** with Row Level Security and synchronized in real-time across all platforms using a centralized PostgreSQL database. Whether you are at your desk or on the move, your financial single source of truth is always with you.
 
 ---
 
-## ✨ Features
+## Features
 
-- **🔄 Cloud Sync** - Seamless real-time synchronization between Desktop and Mobile apps.
-- **📱 Cross-Platform** - Native Windows/macOS experience via Tauri and Android/iOS via Expo.
-- **🔐 Secure Authentication** - Personal accounts managed by Supabase Auth with Row Level Security (RLS).
-- **📊 Real-time Dashboard** - Instant visual updates of your balance and spending trends.
-- **📥 Local Migration** - Built-in bridge to migrate legacy local SQLite data to your cloud account.
-- **📅 Recurring Transactions** - Automate your weekly, monthly, or yearly entries.
-- **📉 Analytics & Insights** - Detailed category breakdowns and seasonal spending charts.
+- **Cloud Sync** — Seamless real-time synchronization between Desktop and Mobile apps.
+- **Cross-Platform** — Native Windows, macOS, Linux via Tauri; Android and iOS via Expo.
+- **Secure Authentication** — Personal accounts managed by Supabase Auth with Row Level Security (RLS).
+- **Real-time Dashboard** — Instant visual updates of your balance and spending trends.
+- **Local Migration** — Built-in bridge to migrate legacy local SQLite data to your cloud account.
+- **Recurring Transactions** — Automate your weekly, monthly, or yearly entries.
+- **Analytics & Insights** — Detailed category breakdowns and seasonal spending charts.
+- **Savings Goals** — Track and manage your savings targets.
 
 ---
 
@@ -47,7 +47,7 @@ All data is secured via **Supabase Auth** and synchronized in real-time across p
 ![Desktop Dashboard](assets/desktop-dashboard.png)
 
 ### Mobile Client
-Coming soon!...
+Screenshots coming soon.
 
 ---
 
@@ -55,74 +55,185 @@ Coming soon!...
 
 | Layer | Technology |
 |---|---|
-| **Backend / DB** | [Supabase](https://supabase.com) (PostgreSQL + Real-time) |
-| **Desktop App** | [Tauri](https://tauri.app) + React + TypeScript |
-| **Mobile App** | [Expo](https://expo.dev) (React Native) + Expo Router |
-| **Shared Logic** | TypeScript Monorepo Workspaces |
-| **Styling** | Tailwind CSS (Desktop) · NativeWind (Mobile) |
-| **Charts** | Recharts |
-| **Icons** | Lucide React |
-| **Storage** | localStorage (v1.0) · SQLite & Supabase |
+| **Backend / Database** | [Supabase](https://supabase.com) (PostgreSQL + Realtime) |
+| **Authentication** | Supabase Auth with Row Level Security |
+| **Desktop Framework** | [Tauri](https://tauri.app) 2.x (Rust + WebView) |
+| **Desktop UI** | React 19 + TypeScript |
+| **Desktop Bundler** | Vite 7 |
+| **Desktop Styling** | Tailwind CSS 4 |
+| **Desktop Charts** | Recharts |
+| **Mobile Framework** | [Expo](https://expo.dev) SDK 54 (React Native 0.81) |
+| **Mobile Navigation** | Expo Router (file-based) |
+| **Mobile Charts** | react-native-svg |
+| **Mobile Icons** | @expo/vector-icons (Ionicons) |
+| **Shared** | TypeScript (monorepo workspaces) |
 
 ---
 
-## Getting Started
+## Installation
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org) v18 or later
-- [Rust](https://rustup.rs) (stable toolchain)
-- [Tauri CLI prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites) for your OS
-- [Android Studio](https://developer.android.com/studio) (for Mobile Emulator) or [Expo Go](https://expo.dev/client)
+- [Rust](https://rustup.rs) (stable toolchain) — required for Desktop
+- [Tauri CLI prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites) — required for Desktop
+- [Android Studio](https://developer.android.com/studio) — required for Android builds
+- [Xcode](https://developer.apple.com/xcode/) (macOS only) — required for iOS builds
+- [Expo Go](https://expo.dev/client) — for mobile development on physical devices
 
-### Installation
+### Desktop (Windows, macOS, Linux)
+
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/SanujaMenath/moneyflow.git
-cd moneyflow
+cd moneyflow/desktop
 
-# 2. Install dependencies
+# Install dependencies
 npm install
-```
 
-### Configure Environment
-```bash
-# Create a .env file in the root with your Supabase credentials:
-SUPABASE_URL=your_project_url
-SUPABASE_ANON_KEY=your_anon_key
-```
+# Configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
 
-### Run
-```bash
-# 3. Run Desktop
+# Run in development mode
 npm run tauri dev
 
-# 4. Run Mobile
-cd mobile
-npx expo start
-```
-
-### Build for production
-```bash
+# Build for production
 npm run tauri build
 ```
 
 The compiled installer will be output to `src-tauri/target/release/bundle/`.
 
+**Download pre-built installers** from the [Releases](https://github.com/SanujaMenath/moneyflow/releases) page:
+- `MoneyFlow_x64-setup.exe` (Windows, NSIS installer)
+- `MoneyFlow_x64_en-US.msi` (Windows, MSI installer)
+
+### Android
+
+```bash
+cd moneyflow/mobile
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
+
+# Prebuild native project
+npx expo prebuild --platform android
+
+# Build release APK (arm64-v8a)
+cd android
+./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a
+
+# Or build release AAB for Play Store
+./gradlew :app:bundleRelease -PreactNativeArchitectures=arm64-v8a
+```
+
+**Download pre-built APK/AAB** from the [Releases](https://github.com/SanujaMenath/moneyflow/releases) page.
+
+### iOS (macOS only)
+
+```bash
+cd moneyflow/mobile
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
+
+# Prebuild native project
+npx expo prebuild --platform ios
+
+# Open in Xcode and archive for App Store
+npx expo run:ios
+
+# Or build for release
+cd ios
+xcodebuild -workspace MoneyFlowMobile.xcworkspace -scheme MoneyFlowMobile -configuration Release
+```
+
+**Note:** iOS builds require a macOS development environment with Xcode 16+ and an Apple Developer account.
+
 ---
 
-## Project Structure
+## Build Instructions
+
+### Project Structure
+
 ```
 moneyflow/
-├── desktop/           # Tauri + React project (Windows/macOS)
-│   ├── src/           # Frontend UI logic
-│   └── src-tauri/     # Rust backend and system config
-├── mobile/            # Expo project (Android/iOS)
-│   ├── app/           # Expo Router file-based navigation
-│   └── components/    # Native UI components
-├── shared/            # Common TypeScript types and Supabase config
-└── package.json       # Monorepo workspace configuration
+├── desktop/                # Tauri + React app (Windows, macOS, Linux)
+│   ├── src/                # Frontend UI (React, TypeScript)
+│   ├── src-tauri/          # Rust backend, Tauri config
+│   ├── .env.example        # Environment template
+│   └── package.json
+├── mobile/                 # Expo / React Native app (Android, iOS)
+│   ├── app/                # Expo Router pages (file-based routing)
+│   ├── components/         # Shared UI components
+│   ├── context/            # React context providers
+│   ├── lib/                # Supabase client, storage, platform utils
+│   ├── services/           # Business logic & API calls
+│   ├── .env.example        # Environment template
+│   └── package.json
+├── shared/                 # Shared TypeScript types (placeholder)
+├── assets/                 # Screenshots and media
+├── .github/workflows/      # CI/CD pipeline
+├── LICENSE
+├── CONTRIBUTING.md
+└── README.md
 ```
+
+### Desktop Build
+
+```bash
+cd desktop
+npm install
+npm run tauri build
+```
+
+The build produces:
+- `MoneyFlow_x64-setup.exe` (NSIS installer)
+- `MoneyFlow_x64_en-US.msi` (MSI installer)
+- `moneyflow.exe` (standalone executable)
+
+### Android Build
+
+```bash
+cd mobile
+npm install
+npx expo prebuild --platform android
+cd android
+./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a
+```
+
+The build produces:
+- `app-release.apk` (APK)
+- `app-release.aab` (Android App Bundle)
+
+### iOS Build
+
+```bash
+cd mobile
+npm install
+npx expo prebuild --platform ios
+npx expo run:ios --configuration Release
+```
+
+The build produces an `.xcarchive` which can be exported as an IPA for App Store distribution.
+
+---
+
+## CI/CD
+
+The project uses GitHub Actions for continuous integration. The CI pipeline:
+
+1. **Lint & Typecheck** — Runs `tsc --noEmit` and `vite build` for Desktop
+2. **Build Desktop** — Builds Tauri app on Ubuntu, Windows, and macOS
+3. **Build Mobile Android** — Builds Android APK using `expo run:android --variant release`
 
 ---
 
@@ -131,10 +242,10 @@ moneyflow/
 - [x] Initial Desktop Release (v1.0)
 - [x] Supabase Cloud Integration
 - [x] Real-time Sync Engine
-- [x] Android Mobile Client (Expo)
+- [x] Android Mobile Client
 - [x] Local-to-Cloud Data Migration Bridge
-- [ ] iOS Deployment
-- [ ] Shared "Service Layer" for business logic
+- [ ] iOS Deployment (App Store)
+- [ ] Shared Service Layer for business logic
 - [ ] PDF Financial Report Generation
 - [ ] AI-Powered Spending Predictions
 
@@ -142,22 +253,16 @@ moneyflow/
 
 ## Contributing
 
-Contributions are welcome. If you find a bug or have a feature suggestion, please [open an issue](https://github.com/SanujaMenath/moneyflow/issues) first before submitting a pull request.
-```bash
-# Fork the repo, then:
-git checkout -b feature/your-feature-name
-git commit -m "feat: add your feature"
-git push origin feature/your-feature-name
-```
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
 ## License
 
-MIT © 2026 [Sanuja Menath](https://github.com/SanujaMenath)
+MIT &copy; 2026 [Sanuja Menath](https://github.com/SanujaMenath)
 
 ---
 
 <div align="center">
-  <sub>MoneyFlow · Built with care by Sanuja Menath</sub>
+  <sub>MoneyFlow &middot; Built with care by Sanuja Menath</sub>
 </div>

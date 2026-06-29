@@ -41,10 +41,7 @@ export const getTransactions = async (): Promise<Transaction[]> => {
     .order("date", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Supabase Error (fetch):", error.message);
-    throw error;
-  }
+  if (error) throw error;
 
   return (data || []).map((r) => ({
     id: r.id,
@@ -77,10 +74,7 @@ export const createTransaction = async (data: Transaction) => {
     },
   ]);
 
-  if (error) {
-    console.error("Supabase Error (insert):", error.message);
-    throw error;
-  }
+  if (error) throw error;
 
   if (data.recurringFrequency && data.recurringFrequency !== "none") {
     await processRecurringTransactions();
@@ -94,10 +88,7 @@ export const deleteTransaction = async (id: number) => {
     .delete()
     .eq("id", id);
 
-  if (error) {
-    console.error("Supabase Error (delete):", error.message);
-    throw error;
-  }
+  if (error) throw error;
 };
 
 
@@ -115,10 +106,7 @@ export const updateTransaction = async (id: number, updates: Partial<Transaction
     .update(dbUpdates)
     .eq("id", id);
 
-  if (error) {
-    console.error("Supabase Error (update):", error.message);
-    throw error;
-  }
+  if (error) throw error;
 };
 
 export const processRecurringTransactions = async (): Promise<number> => {
@@ -131,12 +119,7 @@ export const processRecurringTransactions = async (): Promise<number> => {
       .select("id, user_id, amount, type, category, date, recurring_frequency, recurring_end_date")
       .neq("recurring_frequency", "none");
 
-    if (fetchError) {
-      console.error("Failed to fetch recurring templates:", fetchError.message);
-      return 0;
-    }
-
-    if (!templates || templates.length === 0) return 0;
+    if (fetchError || !templates || templates.length === 0) return 0;
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -192,14 +175,7 @@ export const processRecurringTransactions = async (): Promise<number> => {
         }))
       );
 
-      if (insertError) {
-        console.error(
-          `Failed to create recurring instances for template ${template.id}:`,
-          insertError.message
-        );
-      } else {
-        created += toCreate.length;
-      }
+      if (!insertError) created += toCreate.length;
     }
 
     return created;
