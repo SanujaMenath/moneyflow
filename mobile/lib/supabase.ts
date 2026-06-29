@@ -1,3 +1,4 @@
+import "react-native-url-polyfill/auto";
 import { createClient } from "@supabase/supabase-js";
 import { storage } from "./storage";
 
@@ -16,5 +17,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+  },
+  global: {
+    fetch: fetch.bind(globalThis),
   },
 });

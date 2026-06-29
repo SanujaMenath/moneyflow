@@ -11,6 +11,7 @@ import {
   ScrollView,
   ActivityIndicator
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 const buttonShadow = Platform.select({
@@ -21,6 +22,7 @@ const buttonShadow = Platform.select({
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
@@ -78,13 +80,25 @@ export default function AuthScreen() {
           />
 
           <Text style={styles.label}>Password</Text>
-          <TextInput 
-            placeholder="Your secure password" 
-            style={styles.input} 
-            secureTextEntry 
-            value={password}
-            onChangeText={setPassword} 
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput 
+              placeholder="Your secure password" 
+              style={styles.passwordInput}
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword} 
+            />
+            <TouchableOpacity 
+              style={styles.eyeButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Ionicons 
+                name={showPassword ? "eye-off" : "eye"} 
+                size={22} 
+                color="#64748b" 
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity 
             style={[styles.button, loading && styles.buttonDisabled, buttonShadow]} 
@@ -129,7 +143,31 @@ const styles = StyleSheet.create({
     padding: 16, 
     borderRadius: 16, 
     marginBottom: 20,
-    fontSize: 16
+    fontSize: 16,
+    color: '#1e293b'
+  },
+  passwordContainer: {
+    position: 'relative',
+    marginBottom: 20,
+  },
+  passwordInput: { 
+    backgroundColor: '#f8fafc',
+    borderWidth: 1, 
+    borderColor: '#e2e8f0', 
+    padding: 16, 
+    borderRadius: 16, 
+    fontSize: 16,
+    color: '#1e293b',
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 14,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
   },
   button: { 
     backgroundColor: '#2563eb', 
