@@ -1,4 +1,4 @@
-export type RecurringFrequency = "none" | "weekly" | "monthly" | "yearly";
+export type RecurringFrequency = "none" | "daily" | "weekly" | "monthly" | "yearly";
 
 export interface Transaction {
   id?: number;

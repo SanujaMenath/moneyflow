@@ -5,6 +5,7 @@ import {
   getTransactions,
   deleteTransaction,
   updateTransaction,
+  processRecurringTransactions,
 } from "../services/transactionService";
 
 export const useTransactions = () => {
@@ -25,7 +26,11 @@ export const useTransactions = () => {
   }, []);
 
   useEffect(() => {
-    refresh();
+    const init = async () => {
+      await processRecurringTransactions();
+      refresh();
+    };
+    init();
 
     const channel = supabase
       .channel('schema-db-changes')

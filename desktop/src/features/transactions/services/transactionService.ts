@@ -1,6 +1,37 @@
 import { supabase } from "../../../lib/supabase";
 import type { Transaction, RecurringFrequency } from "../../../types/transaction";
 
+const toLocalDate = (s: string): Date => {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+
+const formatDate = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+const addPeriod = (date: Date, frequency: RecurringFrequency): Date => {
+  const result = new Date(date);
+  switch (frequency) {
+    case "daily":
+      result.setDate(result.getDate() + 1);
+      break;
+    case "weekly":
+      result.setDate(result.getDate() + 7);
+      break;
+    case "monthly":
+      result.setMonth(result.getMonth() + 1);
+      break;
+    case "yearly":
+      result.setFullYear(result.getFullYear() + 1);
+      break;
+  }
+  return result;
+};
+
 export const getTransactions = async (): Promise<Transaction[]> => {
   const { data, error } = await supabase
     .from("transactions")
@@ -82,4 +113,84 @@ export const updateTransaction = async (id: number, updates: Partial<Transaction
     console.error("Supabase Error (update):", error.message);
     throw error;
   }
+};
+
+export const processRecurringTransactions = async (): Promise<number> => {
+  const { data: templates, error: fetchError } = await supabase
+    .from("transactions")
+    .select("id, user_id, amount, type, category, date, recurring_frequency, recurring_end_date")
+    .neq("recurring_frequency", "none");
+
+  if (fetchError) {
+    console.error("Failed to fetch recurring templates:", fetchError.message);
+    return 0;
+  }
+
+  if (!templates || templates.length === 0) return 0;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let created = 0;
+
+  for (const template of templates) {
+    const frequency = template.recurring_frequency as RecurringFrequency;
+    const endDateStr = template.recurring_end_date;
+    const endDate = endDateStr ? toLocalDate(endDateStr) : null;
+
+    const startDate = toLocalDate(template.date);
+
+    const candidateDates: string[] = [];
+    let current = addPeriod(startDate, frequency);
+
+    while (current <= today) {
+      if (endDate && current > endDate) break;
+
+      const dateStr = formatDate(current);
+      if (dateStr !== template.date) {
+        candidateDates.push(dateStr);
+      }
+
+      current = addPeriod(current, frequency);
+    }
+
+    if (candidateDates.length === 0) continue;
+
+    const { data: existing } = await supabase
+      .from("transactions")
+      .select("date")
+      .eq("amount", template.amount)
+      .eq("type", template.type)
+      .eq("category", template.category)
+      .neq("id", template.id);
+
+    const existingDates = new Set((existing || []).map((r) => r.date));
+
+    const toCreate = candidateDates.filter((d) => !existingDates.has(d));
+
+    if (toCreate.length === 0) continue;
+
+    const { error: insertError } = await supabase.from("transactions").insert(
+      toCreate.map((date) => ({
+        user_id: template.user_id,
+        amount: template.amount,
+        type: template.type,
+        category: template.category,
+        date,
+        created_at: new Date().toISOString(),
+        recurring_frequency: "none",
+        recurring_end_date: null,
+      }))
+    );
+
+    if (insertError) {
+      console.error(
+        `Failed to create recurring instances for template ${template.id}:`,
+        insertError.message
+      );
+    } else {
+      created += toCreate.length;
+    }
+  }
+
+  return created;
 };

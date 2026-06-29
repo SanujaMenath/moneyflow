@@ -20,6 +20,7 @@ const expenseCategories = [
 
 const frequencies: { value: RecurringFrequency; label: string }[] = [
   { value: "none", label: "One-time" },
+  { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
   { value: "yearly", label: "Yearly" },
@@ -138,6 +139,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
             <label className="text-sm font-medium text-text-secondary">Category</label>
             <select
               value={category}
+              title="Select category"
               onChange={(e) => setCategory(e.target.value)}
               className="p-3 border border-border rounded-xl text-sm sm:text-base bg-white"
               required
@@ -155,6 +157,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              placeholder="Select date"
               className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary text-sm sm:text-base"
               required
             />
@@ -166,6 +169,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
           <label className="text-sm font-medium text-text-secondary">Recurring</label>
           <select
             value={recurringFrequency}
+            title="Select recurring frequency"
             onChange={(e) => setRecurringFrequency(e.target.value as RecurringFrequency)}
             className="p-3 border border-border rounded-xl text-sm sm:text-base bg-white"
           >
@@ -185,6 +189,7 @@ const AddTransactionForm = ({ onClose, onSave }: AddTransactionFormProps) => {
               type="date"
               value={recurringEndDate}
               onChange={(e) => setRecurringEndDate(e.target.value)}
+              placeholder="Select end date"
               className="p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
             <p className="text-xs text-text-secondary">

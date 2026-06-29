@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS transactions (
   category TEXT NOT NULL,
   date TEXT NOT NULL,                  
   created_at TEXT NOT NULL,              
-  recurring_frequency TEXT DEFAULT 'none' CHECK(recurring_frequency IN ('none', 'weekly', 'monthly', 'yearly')),
+  recurring_frequency TEXT DEFAULT 'none',
   recurring_end_date TEXT                
 );
