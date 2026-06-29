@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storage } from "../lib/storage";
 
 export interface Currency {
   code: string;
@@ -37,7 +37,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
   const [currency, setCurrencyState] = useState<Currency>(currencies[0]);
 
   useEffect(() => {
-    AsyncStorage.getItem("mf_currency").then((saved) => {
+    storage.getItem("mf_currency").then((saved) => {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -50,7 +50,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
 
   const setCurrency = (c: Currency) => {
     setCurrencyState(c);
-    AsyncStorage.setItem("mf_currency", JSON.stringify(c));
+    storage.setItem("mf_currency", JSON.stringify(c));
   };
 
   const format = (cents: number): string => {

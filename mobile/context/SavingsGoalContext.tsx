@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storage } from "../lib/storage";
 
 interface SavingsGoalContextType {
   savingsGoalPercent: number;
@@ -18,7 +18,7 @@ export const SavingsGoalProvider = ({ children }: { children: ReactNode }) => {
   const [savingsGoalPercent, setSavingsGoalPercentState] = useState(20);
 
   useEffect(() => {
-    AsyncStorage.getItem("mf_savings_goal").then((saved) => {
+    storage.getItem("mf_savings_goal").then((saved) => {
       if (saved) {
         const val = parseInt(saved, 10);
         if (!isNaN(val) && val >= 0 && val <= 50) setSavingsGoalPercentState(val);
@@ -29,7 +29,7 @@ export const SavingsGoalProvider = ({ children }: { children: ReactNode }) => {
   const setSavingsGoalPercent = (percent: number) => {
     const clamped = Math.max(0, Math.min(50, percent));
     setSavingsGoalPercentState(clamped);
-    AsyncStorage.setItem("mf_savings_goal", String(clamped));
+    storage.setItem("mf_savings_goal", String(clamped));
   };
 
   return (

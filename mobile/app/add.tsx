@@ -7,7 +7,12 @@ import { createTransaction } from "../services/transactionService";
 import type { RecurringFrequency } from "../types/transaction";
 import { incomeCategories, expenseCategories, frequencies } from "../types/transaction";
 import { useRouter } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "../components/DatePicker";
+
+const saveBtnShadow = Platform.select({
+  web: { boxShadow: "0 5px 10px rgba(37,99,235,0.3)" },
+  default: { elevation: 5, shadowColor: "#2563eb", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+});
 
 export default function AddTransactionScreen() {
   const router = useRouter();
@@ -148,8 +153,8 @@ export default function AddTransactionScreen() {
       >
         <Text style={styles.dateText}>{date.toDateString()}</Text>
       </TouchableOpacity>
-      {Platform.OS === "ios" && showDatePicker && (
-        <DateTimePicker value={date} mode="date" display="spinner" onChange={(e, d) => { setShowDatePicker(false); if (d) setDate(d); }} />
+      {Platform.OS !== "android" && showDatePicker && (
+        <DatePicker value={date} onChange={setDate} show={showDatePicker} onClose={() => setShowDatePicker(false)} />
       )}
 
       {/* Recurring Frequency */}
@@ -176,14 +181,14 @@ export default function AddTransactionScreen() {
           >
             <Text style={styles.dateText}>{endDate ? endDate.toDateString() : "No end date"}</Text>
           </TouchableOpacity>
-          {Platform.OS === "ios" && showEndDatePicker && (
-            <DateTimePicker value={endDate || new Date()} mode="date" display="spinner" onChange={(e, d) => { setShowEndDatePicker(false); if (d) setEndDate(d); }} />
+          {Platform.OS !== "android" && showEndDatePicker && (
+            <DatePicker value={endDate || new Date()} onChange={(d) => setEndDate(d)} show={showEndDatePicker} onClose={() => setShowEndDatePicker(false)} />
           )}
         </>
       )}
 
       {/* Save */}
-      <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={loading}>
+      <TouchableOpacity style={[styles.saveBtn, saveBtnShadow]} onPress={handleSave} disabled={loading}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveBtnText}>Save Transaction</Text>}
       </TouchableOpacity>
     </ScrollView>
@@ -212,6 +217,6 @@ const styles = StyleSheet.create({
   freqBtn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12, backgroundColor: "#f1f5f9" },
   freqActive: { backgroundColor: "#2563eb" },
   freqText: { fontSize: 13, fontWeight: "600", color: "#475569" },
-  saveBtn: { backgroundColor: "#2563eb", padding: 18, borderRadius: 16, alignItems: "center", marginTop: 40, elevation: 5, shadowColor: "#2563eb", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+  saveBtn: { backgroundColor: "#2563eb", padding: 18, borderRadius: 16, alignItems: "center", marginTop: 40 },
   saveBtnText: { color: "#fff", fontWeight: "800", fontSize: 18 },
 });

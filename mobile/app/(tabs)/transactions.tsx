@@ -11,13 +11,18 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useCurrency } from "../../context/CurrencyContext";
 import * as Haptics from "expo-haptics";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "../../components/DatePicker";
 
 const PRESETS = [
   { label: "All Time", key: "all" as const },
   { label: "This Month", key: "this" as const },
   { label: "Last Month", key: "last" as const },
 ];
+
+const fabShadow = Platform.select({
+  web: { boxShadow: "0 8px 16px rgba(37,99,235,0.3)" },
+  default: { elevation: 8, shadowColor: "#2563eb", shadowOpacity: 0.3, shadowRadius: 8 },
+});
 
 const getMonthRange = (offset: number) => {
   const now = new Date();
@@ -105,7 +110,9 @@ export default function TransactionsScreen() {
   };
 
   const showActionMenu = (item: Transaction) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     const buttons: AlertButton[] = [
       {
         text: "Delete", style: "destructive",
@@ -193,14 +200,8 @@ export default function TransactionsScreen() {
         </View>
       </View>
 
-      {Platform.OS === "ios" && showStartPicker && (
-        <DateTimePicker value={startDate ? new Date(startDate) : new Date()} mode="date" display="spinner"
-          onChange={(e, d) => { setShowStartPicker(false); if (d) setStartDate(d.toISOString().split("T")[0]); }} />
-      )}
-      {Platform.OS === "ios" && showEndPicker && (
-        <DateTimePicker value={endDate ? new Date(endDate) : new Date()} mode="date" display="spinner"
-          onChange={(e, d) => { setShowEndPicker(false); if (d) setEndDate(d.toISOString().split("T")[0]); }} />
-      )}
+      <DatePicker value={startDate ? new Date(startDate) : new Date()} onChange={(d) => setStartDate(d.toISOString().split("T")[0])} show={showStartPicker} onClose={() => setShowStartPicker(false)} />
+      <DatePicker value={endDate ? new Date(endDate) : new Date()} onChange={(d) => setEndDate(d.toISOString().split("T")[0])} show={showEndPicker} onClose={() => setShowEndPicker(false)} />
 
       {/* List */}
       <FlatList
@@ -230,7 +231,7 @@ export default function TransactionsScreen() {
         ListEmptyComponent={<Text style={styles.emptyText}>{isFiltered ? "No transactions found for this date range." : "No transactions yet."}</Text>}
       />
 
-      <TouchableOpacity style={styles.fab} onPress={() => router.push("/add")}>
+      <TouchableOpacity style={[styles.fab, fabShadow]} onPress={() => router.push("/add")}>
         <Ionicons name="add" size={30} color="white" />
       </TouchableOpacity>
     </View>
@@ -265,5 +266,5 @@ const styles = StyleSheet.create({
   recurringText: { fontSize: 10, color: "#2563eb", fontWeight: "700", marginLeft: 3, textTransform: "uppercase" as const },
   amount: { fontSize: 16, fontWeight: "700" },
   emptyText: { textAlign: "center", marginTop: 40, color: "#94a3b8", fontSize: 15 },
-  fab: { position: "absolute", bottom: 20, right: 20, backgroundColor: "#2563eb", width: 60, height: 60, borderRadius: 30, justifyContent: "center", alignItems: "center", elevation: 8, shadowColor: "#2563eb", shadowOpacity: 0.3, shadowRadius: 8 },
+  fab: { position: "absolute", bottom: 20, right: 20, backgroundColor: "#2563eb", width: 60, height: 60, borderRadius: 30, justifyContent: "center", alignItems: "center" },
 });

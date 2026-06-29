@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,11 @@ import type { Transaction } from '../../types/transaction';
 import { useCurrency } from '../../context/CurrencyContext';
 import AnalyticsDonut from '../../components/AnalyticsDonut';
 import SavingsGoalCard from '../../components/SavingsGoalCard';
+
+const mainCardShadow = Platform.select({
+  web: { boxShadow: "0 5px 10px rgba(37,99,235,0.3)" },
+  default: { elevation: 5, shadowColor: '#2563eb', shadowOpacity: 0.3, shadowRadius: 10 },
+});
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -75,7 +80,7 @@ export default function DashboardScreen() {
       </View>
 
       {/* Total Balance */}
-      <View style={styles.mainCard}>
+      <View style={[styles.mainCard, mainCardShadow]}>
         <Text style={styles.cardLabel}>Total Balance</Text>
         <Text style={styles.balanceText}>{format(stats.balance)}</Text>
       </View>
@@ -132,7 +137,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: { marginTop: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
   greeting: { fontSize: 24, fontWeight: '800', color: '#1e293b' },
-  mainCard: { backgroundColor: '#2563eb', padding: 30, borderRadius: 24, elevation: 5, shadowColor: '#2563eb', shadowOpacity: 0.3, shadowRadius: 10 },
+  mainCard: { backgroundColor: '#2563eb', padding: 30, borderRadius: 24 },
   cardLabel: { color: '#bfdbfe', fontSize: 14, fontWeight: '600', textTransform: 'uppercase' as const },
   balanceText: { color: '#fff', fontSize: 36, fontWeight: '900', marginTop: 5 },
   statsRow: { flexDirection: 'row', gap: 15, marginTop: 20 },

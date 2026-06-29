@@ -13,6 +13,11 @@ import {
 } from 'react-native';
 import { supabase } from '../lib/supabase';
 
+const buttonShadow = Platform.select({
+  web: { boxShadow: "0 4px 8px rgba(37,99,235,0.2)" },
+  default: { elevation: 4, shadowColor: '#2563eb', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 },
+});
+
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,7 +84,7 @@ export default function AuthScreen() {
           />
 
           <TouchableOpacity 
-            style={[styles.button, loading && styles.buttonDisabled]} 
+            style={[styles.button, loading && styles.buttonDisabled, buttonShadow]} 
             onPress={handleAuth} 
             disabled={loading}
           >
@@ -128,11 +133,6 @@ const styles = StyleSheet.create({
     padding: 18, 
     borderRadius: 16, 
     alignItems: 'center',
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4
   },
   buttonDisabled: { backgroundColor: '#94a3b8' },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
