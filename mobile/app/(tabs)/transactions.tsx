@@ -94,17 +94,28 @@ export default function TransactionsScreen() {
   const isFiltered = startDate !== "" || endDate !== "";
 
   const handleDelete = async (id: number) => {
-    const { error } = await supabase.from("transactions").delete().eq("id", id);
-    if (error) Alert.alert("Error", "Could not delete transaction.");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { Alert.alert("Error", "You must be signed in to delete transactions."); return; }
+
+    const { error } = await supabase
+      .from("transactions")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
+    if (error) Alert.alert("Error", error.message);
     else fetchData();
   };
 
   const handleStopRecurring = async (id: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { Alert.alert("Error", "You must be signed in."); return; }
+
     const { error } = await supabase
       .from("transactions")
       .update({ recurring_frequency: "none" })
-      .eq("id", id);
-    if (error) Alert.alert("Error", "Could not stop recurring transaction.");
+      .eq("id", id)
+      .eq("user_id", user.id);
+    if (error) Alert.alert("Error", error.message);
     else fetchData();
   };
 

@@ -83,16 +83,23 @@ export const createTransaction = async (data: Transaction) => {
 
 
 export const deleteTransaction = async (id: number) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Authentication required to delete transactions.");
+
   const { error } = await supabase
     .from("transactions")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) throw error;
 };
 
 
 export const updateTransaction = async (id: number, updates: Partial<Transaction>) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Authentication required to update transactions.");
+
   const dbUpdates: any = {};
   if (updates.amount !== undefined) dbUpdates.amount = updates.amount;
   if (updates.type !== undefined) dbUpdates.type = updates.type;
@@ -104,7 +111,8 @@ export const updateTransaction = async (id: number, updates: Partial<Transaction
   const { error } = await supabase
     .from("transactions")
     .update(dbUpdates)
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) throw error;
 };
