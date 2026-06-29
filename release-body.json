@@ -1,0 +1,8 @@
+{
+  "tag_name": "v1.2.0",
+  "target_commitish": "main",
+  "name": "v1.2.0",
+  "body": "## Release Notes — v1.2.0\n\n### New Features\n- Cross-platform support: Windows, macOS, Linux (Desktop) and Android (Mobile)\n- Real-time cloud sync powered by Supabase\n- Recurring transaction automation (daily, weekly, monthly, yearly)\n- Savings goal tracking\n- Analytics dashboard with category breakdowns and spending insights\n- Local-to-cloud data migration bridge\n- iOS support (Xcode project ready for archiving)\n\n### Improvements\n- Migrated Supabase credentials from hardcoded values to environment variables\n- Replaced dynamic require() with static imports in mobile app\n- Made header date dynamic instead of hardcoded\n- Updated HTML title from \"Tauri + React + Typescript\" to \"MoneyFlow\"\n- Fixed hardcoded redirect URL in mobile auth flow\n- Comprehensive .gitignore with platform-specific rules\n- Updated CI workflow for reliable Android builds (arm64-v8a)\n- Enhanced README with detailed build instructions for all platforms\n\n### Bug Fixes\n- Removed all console.error statements from production code\n- Fixed Android x86 native module compilation issue (build targets arm64-v8a)\n- Proper error handling without debug logging in production\n\n### Known Issues\n- iOS build requires macOS with Xcode 16+ (not available on Windows/Linux CI)\n- Android x86 and x86_64 architectures excluded from build due to react-native-worklets 0.5.1 NDK compatibility issue\n- shared/ directory is a placeholder for future refactoring\n- Mobile app currently does not test iOS builds in CI\n",
+  "draft": false,
+  "prerelease": false
+}

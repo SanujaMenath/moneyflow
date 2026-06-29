@@ -68,5 +68,3 @@ uninstall.exe
 
 # ─── OS files ───
 *.orig.*
-
-.github/workflows/ci.yml
