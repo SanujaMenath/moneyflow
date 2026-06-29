@@ -3,7 +3,9 @@ import { Stack } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import AuthScreen from './auth'; // Ensure this path is correct
+import AuthScreen from './auth';
+import { CurrencyProvider } from '../context/CurrencyContext';
+import { SavingsGoalProvider } from '../context/SavingsGoalContext';
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -16,7 +18,6 @@ export default function RootLayout() {
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth Event:", event);
       setSession(session);
     });
 
@@ -25,7 +26,6 @@ export default function RootLayout() {
     };
   }, []);
 
-  // Show loading spinner while checking auth status
   if (isInitializing) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -34,16 +34,18 @@ export default function RootLayout() {
     );
   }
 
-  // GATE: If no user is logged in, show the Auth screen
   if (!session) {
     return <AuthScreen />;
   }
 
-  // If logged in, show the app structure
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" /> 
-      <Stack.Screen name="add" options={{ presentation: 'modal', headerShown: true, title: 'New Entry' }} />
-    </Stack>
+    <CurrencyProvider>
+      <SavingsGoalProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="add" options={{ presentation: 'modal', headerShown: true, title: 'New Transaction' }} />
+        </Stack>
+      </SavingsGoalProvider>
+    </CurrencyProvider>
   );
 }

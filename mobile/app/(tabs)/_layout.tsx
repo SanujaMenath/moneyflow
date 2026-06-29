@@ -6,21 +6,45 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#2563eb",
+        tabBarInactiveTintColor: "#94a3b8",
         headerShown: false,
-        tabBarLabelStyle: { fontSize: 12, fontWeight: "500" },
-        tabBarStyle: { height: 65, paddingBottom: 10, paddingTop: 5 },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarStyle: { height: 60, paddingBottom: 8, paddingTop: 4 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Dashboard",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "home" : "home-outline"}
-              size={24}
-              color={color}
-            />
+            <Ionicons name={focused ? "grid" : "grid-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="transactions"
+        options={{
+          title: "Transactions",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "list" : "list-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="analytics"
+        options={{
+          title: "Analytics",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "bar-chart" : "bar-chart-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "settings" : "settings-outline"} size={22} color={color} />
           ),
         }}
       />

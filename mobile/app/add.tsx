@@ -1,25 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  ScrollView,
-  Platform,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Alert,
+  ActivityIndicator, ScrollView, Platform,
 } from "react-native";
-import { supabase } from "../lib/supabase";
+import { createTransaction } from "../services/transactionService";
+import type { RecurringFrequency } from "../types/transaction";
+import { incomeCategories, expenseCategories, frequencies } from "../types/transaction";
 import { useRouter } from "expo-router";
-import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-
-type Frequency = "none" | "daily" | "weekly" | "monthly" | "yearly";
-
-const CATEGORY_MAP = {
-  income: ["Salary", "Freelance", "Investment", "Gift", "Other"],
-  expense: ["Food", "Rent", "Travel", "Entertainment", "Shopping", "Healthcare", "Utilities", "Other"],
-};
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function AddTransactionScreen() {
   const router = useRouter();
@@ -28,23 +16,25 @@ export default function AddTransactionScreen() {
   const [category, setCategory] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");
   const [date, setDate] = useState(new Date());
-
-  const [frequency, setFrequency] = useState<Frequency>("none");
+  const [frequency, setFrequency] = useState<RecurringFrequency>("none");
   const [endDate, setEndDate] = useState<Date | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [customCategory, setCustomCategory] = useState("");
 
-  // Optimization: Reset category if it doesn't exist in the new type's list
+  const categories = type === "income" ? incomeCategories : expenseCategories;
+
   useEffect(() => {
     setCategory("");
+    setCustomCategory("");
   }, [type]);
 
   const showAndroidPicker = (isEndDate: boolean) => {
+    const { DateTimePickerAndroid } = require("@react-native-community/datetimepicker");
     DateTimePickerAndroid.open({
       value: isEndDate ? (endDate || new Date()) : date,
-      onChange: (event, selectedDate) => {
+      onChange: (_event: any, selectedDate?: Date) => {
         if (selectedDate) {
           if (isEndDate) setEndDate(selectedDate);
           else setDate(selectedDate);
@@ -55,36 +45,36 @@ export default function AddTransactionScreen() {
   };
 
   async function handleSave() {
-    if (!amount || !category) {
-      Alert.alert("Error", "Amount and Category are required.");
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      Alert.alert("Error", "Please enter a valid amount greater than 0.");
+      return;
+    }
+    const finalCategory = category === "Other" && customCategory.trim()
+      ? customCategory.trim()
+      : category;
+    if (!finalCategory) {
+      Alert.alert("Error", "Please select a category.");
       return;
     }
 
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) throw new Error("User session expired.");
-
-      const { error } = await supabase.from("transactions").insert([
-        {
-          user_id: user.id,
-          amount: parseInt(amount),
-          type: type,
-          category: category,
-          date: date.toISOString().split("T")[0],
-          recurring_frequency: frequency,
-          recurring_end_date: endDate ? endDate.toISOString().split("T")[0] : null,
-        },
-      ]);
-
-      if (error) throw error;
+      await createTransaction({
+        amount: Math.round(numericAmount * 100),
+        type,
+        category: finalCategory,
+        date: date.toISOString().split("T")[0],
+        createdAt: new Date().toISOString(),
+        recurringFrequency: frequency,
+        recurringEndDate: endDate ? endDate.toISOString().split("T")[0] : null,
+      });
 
       Alert.alert("Success", "Transaction recorded!", [
         { text: "OK", onPress: () => router.back() },
       ]);
     } catch (error: any) {
-      Alert.alert("Database Error", error.message);
+      Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
     }
@@ -92,7 +82,7 @@ export default function AddTransactionScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-      <Text style={styles.title}>Add Transaction</Text>
+      <Text style={styles.title}>New Transaction</Text>
 
       {/* Type Selector */}
       <View style={styles.row}>
@@ -110,25 +100,30 @@ export default function AddTransactionScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Amount */}
       <Text style={styles.label}>Amount</Text>
       <TextInput
         style={styles.input}
-        placeholder="e.g. 5000"
-        keyboardType="numeric"
+        placeholder="0.00"
+        keyboardType="decimal-pad"
         value={amount}
         onChangeText={setAmount}
       />
 
-      <Text style={styles.label}>Select Category</Text>
+      {/* Category */}
+      <Text style={styles.label}>Category</Text>
       <View style={styles.categoryGrid}>
-        {CATEGORY_MAP[type].map((cat) => (
+        {categories.map((cat) => (
           <TouchableOpacity
             key={cat}
             style={[
               styles.categoryChip,
-              category === cat && (type === "income" ? styles.incomeChipActive : styles.expenseChipActive)
+              category === cat && (type === "income" ? styles.incomeChipActive : styles.expenseChipActive),
             ]}
-            onPress={() => setCategory(cat)}
+            onPress={() => {
+              setCategory(cat);
+              if (cat !== "Other Income" && cat !== "Other Expense") setCustomCategory("");
+            }}
           >
             <Text style={[styles.categoryChipText, category === cat && styles.whiteText]}>
               {cat}
@@ -136,17 +131,16 @@ export default function AddTransactionScreen() {
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* Manual category entry fallback */}
-      {category === "Other" && (
+      {(category === "Other Income" || category === "Other Expense" || category === "Other") && (
         <TextInput
           style={[styles.input, { marginTop: 10 }]}
           placeholder="Type custom category..."
-          onChangeText={setCategory}
+          value={customCategory}
+          onChangeText={setCustomCategory}
         />
       )}
 
-      {/* Date Picker */}
+      {/* Date */}
       <Text style={styles.label}>Date</Text>
       <TouchableOpacity
         style={styles.datePicker}
@@ -155,19 +149,19 @@ export default function AddTransactionScreen() {
         <Text style={styles.dateText}>{date.toDateString()}</Text>
       </TouchableOpacity>
       {Platform.OS === "ios" && showDatePicker && (
-        <DateTimePicker value={date} mode="date" display="spinner" onChange={(e, d) => { setShowDatePicker(false); if(d) setDate(d); }} />
+        <DateTimePicker value={date} mode="date" display="spinner" onChange={(e, d) => { setShowDatePicker(false); if (d) setDate(d); }} />
       )}
 
       {/* Recurring Frequency */}
-      <Text style={styles.label}>Recurring Frequency</Text>
+      <Text style={styles.label}>Recurring</Text>
       <View style={styles.frequencyRow}>
-        {(["none", "daily", "weekly", "monthly"] as Frequency[]).map((f) => (
+        {frequencies.map((f) => (
           <TouchableOpacity
-            key={f}
-            style={[styles.freqBtn, frequency === f && styles.freqActive]}
-            onPress={() => setFrequency(f)}
+            key={f.value}
+            style={[styles.freqBtn, frequency === f.value && styles.freqActive]}
+            onPress={() => setFrequency(f.value)}
           >
-            <Text style={[styles.freqText, frequency === f && styles.whiteText]}>{f}</Text>
+            <Text style={[styles.freqText, frequency === f.value && styles.whiteText]}>{f.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -175,19 +169,20 @@ export default function AddTransactionScreen() {
       {/* Recurring End Date */}
       {frequency !== "none" && (
         <>
-          <Text style={styles.label}>Recurring End Date</Text>
+          <Text style={styles.label}>End Date (optional)</Text>
           <TouchableOpacity
             style={styles.datePicker}
             onPress={() => (Platform.OS === "android" ? showAndroidPicker(true) : setShowEndDatePicker(true))}
           >
-            <Text style={styles.dateText}>{endDate ? endDate.toDateString() : "Select End Date"}</Text>
+            <Text style={styles.dateText}>{endDate ? endDate.toDateString() : "No end date"}</Text>
           </TouchableOpacity>
           {Platform.OS === "ios" && showEndDatePicker && (
-            <DateTimePicker value={endDate || new Date()} mode="date" display="spinner" onChange={(e, d) => { setShowEndDatePicker(false); if(d) setEndDate(d); }} />
+            <DateTimePicker value={endDate || new Date()} mode="date" display="spinner" onChange={(e, d) => { setShowEndDatePicker(false); if (d) setEndDate(d); }} />
           )}
         </>
       )}
 
+      {/* Save */}
       <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={loading}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveBtnText}>Save Transaction</Text>}
       </TouchableOpacity>
@@ -198,7 +193,7 @@ export default function AddTransactionScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
   title: { fontSize: 26, fontWeight: "900", color: "#1e293b", marginVertical: 20, paddingTop: 40 },
-  label: { fontSize: 14, fontWeight: "700", color: "#64748b", marginBottom: 10, marginTop: 20, textTransform: "uppercase", letterSpacing: 0.5 },
+  label: { fontSize: 14, fontWeight: "700", color: "#64748b", marginBottom: 10, marginTop: 20, textTransform: "uppercase" as const, letterSpacing: 0.5 },
   input: { borderWidth: 1, borderColor: "#e2e8f0", padding: 16, borderRadius: 14, fontSize: 16, backgroundColor: "#f8fafc" },
   row: { flexDirection: "row", gap: 10, marginBottom: 10 },
   typeBtn: { flex: 1, padding: 16, borderRadius: 14, alignItems: "center", backgroundColor: "#f1f5f9" },
@@ -206,9 +201,9 @@ const styles = StyleSheet.create({
   incomeActive: { backgroundColor: "#10b981" },
   typeText: { fontWeight: "700", color: "#64748b" },
   whiteText: { color: "#fff" },
-  categoryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  categoryChip: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 12, backgroundColor: "#f1f5f9", borderWidth: 1, borderColor: "#e2e8f0" },
-  categoryChipText: { fontSize: 14, fontWeight: "600", color: "#475569" },
+  categoryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  categoryChip: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12, backgroundColor: "#f1f5f9", borderWidth: 1, borderColor: "#e2e8f0" },
+  categoryChipText: { fontSize: 13, fontWeight: "600", color: "#475569" },
   incomeChipActive: { backgroundColor: "#10b981", borderColor: "#10b981" },
   expenseChipActive: { backgroundColor: "#ef4444", borderColor: "#ef4444" },
   datePicker: { padding: 16, borderWidth: 1, borderColor: "#e2e8f0", borderRadius: 14, backgroundColor: "#f8fafc" },
@@ -216,7 +211,7 @@ const styles = StyleSheet.create({
   frequencyRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   freqBtn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12, backgroundColor: "#f1f5f9" },
   freqActive: { backgroundColor: "#2563eb" },
-  freqText: { fontSize: 13, fontWeight: "600", color: "#475569", textTransform: "capitalize" },
-  saveBtn: { backgroundColor: "#2563eb", padding: 18, borderRadius: 16, alignItems: "center", marginTop: 40, shadowColor: "#2563eb", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 },
+  freqText: { fontSize: 13, fontWeight: "600", color: "#475569" },
+  saveBtn: { backgroundColor: "#2563eb", padding: 18, borderRadius: 16, alignItems: "center", marginTop: 40, elevation: 5, shadowColor: "#2563eb", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
   saveBtnText: { color: "#fff", fontWeight: "800", fontSize: 18 },
 });
