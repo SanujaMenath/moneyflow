@@ -4,9 +4,10 @@ import {
   ArrowLeftRight,
   BarChart3,
   Settings,
+  Users,
 } from "lucide-react";
 
-type TabName = "Dashboard" | "Transactions" | "Analytics" | "Settings";
+type TabName = "Dashboard" | "Transactions" | "Analytics" | "Settings" | "Collaboration";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ const topMenuItems: { name: TabName; icon: React.ElementType; label: string }[] 
   { name: "Dashboard",    icon: LayoutDashboard, label: "Dashboard"    },
   { name: "Transactions", icon: ArrowLeftRight,  label: "Transactions" },
   { name: "Analytics",    icon: BarChart3,       label: "Analytics"    },
+  { name: "Collaboration", icon: Users,          label: "Collaboration" },
 ];
 
 const MainLayout = ({ children, activeTab, setActiveTab }: MainLayoutProps) => {

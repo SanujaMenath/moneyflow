@@ -9,11 +9,12 @@ import AddTransactionForm from "./features/transactions/AddTransactionForm";
 import { useTransactions } from "./features/transactions/hooks/useTransactions";
 import SettingsPage from "./features/settings/SettingsPage";
 import AnalyticsPage from "./features/analytics/AnalyticsPage";
+import CollaborationPage from "./features/collaboration/CollaborationPage";
 
 function App() {
   const [session, setSession] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<
-    "Dashboard" | "Transactions" | "Analytics" | "Settings"
+    "Dashboard" | "Transactions" | "Analytics" | "Settings" | "Collaboration"
   >("Dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -64,6 +65,8 @@ function App() {
         {activeTab === "Analytics" && (
           <AnalyticsPage transactions={tx.transactions} />
         )}
+
+        {activeTab === "Collaboration" && <CollaborationPage />}
 
         {activeTab === "Settings" && <SettingsPage />}
       </div>
